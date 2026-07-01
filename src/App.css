@@ -1,0 +1,60 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+  background: #111827;
+  color: white;
+  padding: 24px;
+}
+
+.sidebar button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 16px 0;
+}
+
+nav p {
+  padding: 10px 0;
+  margin: 0;
+  color: #d1d5db;
+}
+
+.main {
+  flex: 1;
+  padding: 40px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.card.new {
+  border: 2px dashed #2563eb;
+  color: #2563eb;
+}
