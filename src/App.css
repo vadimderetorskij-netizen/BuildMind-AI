@@ -249,3 +249,17 @@ export default App;
 .delete-btn:hover {
   background: #991b1b;
 }
+.pdf-controls {
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  align-items: center;
+}
+
+.pdf-controls button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
