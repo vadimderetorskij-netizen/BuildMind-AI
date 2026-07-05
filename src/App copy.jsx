@@ -20,13 +20,12 @@ function App() {
     localStorage.setItem("projects", JSON.stringify(projects));
   }, [projects]);
 
-  function handleChange(event) {
-    setForm({
-      ...form,
-      [event.target.name]: event.target.value,
-    });
-  }
-
+function handleChange(event) {
+  setForm({
+    ...form,
+    [event.target.name]: event.target.value,
+  });
+}
   function createProject(event) {
     event.preventDefault();
 
@@ -47,14 +46,6 @@ function App() {
     setShowForm(false);
   }
 
-  function deleteProject(indexToDelete) {
-    const updatedProjects = projects.filter(
-      (project, index) => index !== indexToDelete
-    );
-
-    setProjects(updatedProjects);
-  }
-
   return (
     <div className="app">
       <header className="header">
@@ -71,10 +62,33 @@ function App() {
           <form className="project-form" onSubmit={createProject}>
             <h2>Новий проєкт</h2>
 
-            <input name="name" placeholder="Назва проєкту" value={form.name} onChange={handleChange} />
-            <input name="client" placeholder="Замовник" value={form.client} onChange={handleChange} />
-            <input name="address" placeholder="Адреса" value={form.address} onChange={handleChange} />
-            <input name="type" placeholder="Тип будівлі" value={form.type} onChange={handleChange} />
+            <input
+              name="name"
+              placeholder="Назва проєкту"
+              value={form.name}
+              onChange={handleChange}
+            />
+
+            <input
+              name="client"
+              placeholder="Замовник"
+              value={form.client}
+              onChange={handleChange}
+            />
+
+            <input
+              name="address"
+              placeholder="Адреса"
+              value={form.address}
+              onChange={handleChange}
+            />
+
+            <input
+              name="type"
+              placeholder="Тип будівлі"
+              value={form.type}
+              onChange={handleChange}
+            />
 
             <button className="btn" type="submit">
               Створити
@@ -89,10 +103,6 @@ function App() {
               <p><b>Замовник:</b> {project.client}</p>
               <p><b>Адреса:</b> {project.address}</p>
               <p><b>Тип:</b> {project.type}</p>
-
-              <button className="delete-btn" onClick={() => deleteProject(index)}>
-                Видалити
-              </button>
             </div>
           ))}
         </div>
@@ -101,4 +111,4 @@ function App() {
   );
 }
 
-export default App;
+export default App; 
