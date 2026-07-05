@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "./App.css";
+import ProjectCard from "./components/ProjectCard";
+import AnalysisCard from "./components/AnalysisCard";
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 function App() {
   const [showForm, setShowForm] = useState(false);
@@ -8,6 +10,8 @@ function App() {
  const [numPages, setNumPages] = useState(0);
  const [pageNumber, setPageNumber] = useState(1);
  const [pdfWidth, setPdfWidth] = useState(600);
+ const [pdfText, setPdfText] = useState("");
+ const [analysis, setAnalysis] = useState(null);
   const [projects, setProjects] = useState(() => {
     const saved = localStorage.getItem("projects");
     return saved ? JSON.parse(saved) : [];
@@ -58,8 +62,44 @@ function App() {
 
     setProjects(updatedProjects);
   }
+async function extractText(file) {
+  const arrayBuffer = await file.arrayBuffer();
 
- return (
+  const pdf = await pdfjs.getDocument(arrayBuffer).promise;
+
+  let text = "";
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+
+    text += content.items.map(item => item.str).join(" ");
+    text += "\n";
+    console.log(text);
+    setPdfText(text);
+  }
+
+  setPdfText(text);
+}
+function analyzeDrawing() {
+  if (!pdfText) {
+    alert("Спочатку завантаж PDF");
+    return;
+  }
+
+  const rooms = (pdfText.match(/ROOM|POM|CLASS|SALA/gi) || []).length;
+  const doors = (pdfText.match(/DOOR|DRZWI/gi) || []).length;
+  const windows = (pdfText.match(/WINDOW|OKNO/gi) || []).length;
+
+  setAnalysis({
+    fileName: selectedFile.name,
+    rooms,
+    walls: "визначаються...",
+    concrete: "розраховується...",
+    materials: windows + doors,
+  });
+}
+return (
   <div className="app">
     <header className="header">
       <h1>🏗️ BuildMind AI</h1>
@@ -77,7 +117,14 @@ function App() {
           type="file"
           accept=".pdf"
           style={{ display: "none" }}
-          onChange={(e) => setSelectedFile(e.target.files[0])}
+          onChange={(e) => {
+            const file = e.target.files[0];
+            setSelectedFile(file);
+
+            if (file) {
+              extractText(file);
+            }
+          }}
         />
       </label>
 
@@ -108,7 +155,20 @@ function App() {
 
             <button onClick={() => setPdfWidth(pdfWidth - 100)}>−</button>
             <button onClick={() => setPdfWidth(pdfWidth + 100)}>+</button>
+
+            <button onClick={analyzeDrawing}>🤖 Аналізувати</button>
           </div>
+
+          <AnalysisCard analysis={analysis} />
+
+          {pdfText && (
+            <div className="project-card">
+              <h3>📄 Текст з PDF</h3>
+              <pre style={{ whiteSpace: "pre-wrap", maxHeight: "300px", overflow: "auto" }}>
+                {pdfText}
+              </pre>
+            </div>
+          )}
         </>
       )}
 
@@ -127,16 +187,12 @@ function App() {
 
       <div className="projects">
         {projects.map((project, index) => (
-          <div className="project-card" key={index}>
-            <h3>🏗️ {project.name}</h3>
-            <p><b>Замовник:</b> {project.client}</p>
-            <p><b>Адреса:</b> {project.address}</p>
-            <p><b>Тип:</b> {project.type}</p>
-
-            <button className="delete-btn" onClick={() => deleteProject(index)}>
-              Видалити
-            </button>
-          </div>
+          <ProjectCard
+            key={index}
+            project={project}
+            index={index}
+            deleteProject={deleteProject}
+          />
         ))}
       </div>
     </main>
