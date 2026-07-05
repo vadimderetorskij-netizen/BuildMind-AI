@@ -3,7 +3,7 @@ import "./App.css";
 
 function App() {
   const [showForm, setShowForm] = useState(false);
-
+  const [selectedFile, setSelectedFile] = useState(null);
   const [projects, setProjects] = useState(() => {
     const saved = localStorage.getItem("projects");
     return saved ? JSON.parse(saved) : [];
@@ -64,9 +64,21 @@ function App() {
 
       <main className="content">
         <button className="btn" onClick={() => setShowForm(true)}>
-          📁 Новий проєкт
-        </button>
+  📁 Новий проєкт
+</button>
 
+<label className="btn">
+  📄 Завантажити PDF
+  {selectedFile && (
+  <p>📄 Вибраний файл: {selectedFile.name}</p>
+)}
+  <input
+  type="file"
+  accept=".pdf"
+  style={{ display: "none" }}
+  onChange={(e) => setSelectedFile(e.target.files[0])}
+/>
+</label>
         {showForm && (
           <form className="project-form" onSubmit={createProject}>
             <h2>Новий проєкт</h2>
